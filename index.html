@@ -228,10 +228,20 @@
   }
   header.top p{
     color:rgba(255,255,255,0.88);
-    margin:0;
+    margin:0 0 14px;
     font-size:0.92rem;
     position:relative;
   }
+  .quiz-cta{
+    display:inline-flex; align-items:center; gap:8px;
+    background:#fff; color:var(--brand);
+    padding:9px 20px; border-radius:12px;
+    font-weight:800; font-size:0.88rem; text-decoration:none;
+    box-shadow:0 8px 20px rgba(0,0,0,0.18);
+    transition:transform .15s;
+    position:relative;
+  }
+  .quiz-cta:hover{ transform:translateY(-2px); }
   .card{
     background:var(--card);
     border:1px solid var(--border);
@@ -524,6 +534,7 @@
     <div class="hero-icon">📣</div>
     <h1>בוחן ידע ראשוני — הסברה בחירום</h1>
     <p>מבוסס על חומרי המכללה הלאומית לאיתנות ישראלית ופיקוד העורף</p>
+    <a class="quiz-cta" href="knowledge.html">📖 חומרי לימוד</a>
   </header>
 
   <!-- MASCOT -->
@@ -556,7 +567,8 @@
       <li><span class="ic">🧠</span>מיתוסים מול עובדות</li>
       <li><span class="ic">🚨</span>תגובת הפרט בתרחישי איום</li>
     </ul>
-    <div class="nav-row">
+    <div class="nav-row" style="justify-content:space-between;">
+      <a class="ghost" href="knowledge.html" style="text-decoration:none; display:inline-flex; align-items:center;">📖 לחומרי הלימוד</a>
       <button class="primary" id="btnStart">התחל בוחן 🚀</button>
     </div>
   </div>
