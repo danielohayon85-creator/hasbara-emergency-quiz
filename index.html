@@ -5,53 +5,87 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>בוחן ידע - הסברה בחירום</title>
 <meta name="description" content="בוחן ידע ראשוני בנושא הסברה בחירום ברשות המקומית, מבוסס על חומרי המכללה הלאומית לאיתנות ישראלית ופיקוד העורף.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#f4f6f9;
+    --bg:#eef2fa;
+    --bg-grad-1:#eef2fa;
+    --bg-grad-2:#e4ecf9;
     --card:#ffffff;
-    --ink:#1b2430;
+    --ink:#161e2b;
     --muted:#5b6774;
     --brand:#1d4e89;
+    --brand-2:#2f6fb8;
     --brand-dark:#123a68;
-    --accent:#2e9e6b;
+    --accent:#1f9d6b;
+    --accent-2:#2bbf84;
     --bad:#c0392b;
+    --bad-2:#e0564a;
+    --warn:#d98a1e;
     --border:#e2e6ec;
-    --radius:16px;
+    --radius:18px;
+    --shadow-sm:0 2px 10px rgba(20,30,60,0.06);
+    --shadow-md:0 10px 30px rgba(20,30,60,0.10);
+    --shadow-lg:0 18px 46px rgba(20,30,60,0.16);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#0f1420;
-      --card:#171f2e;
+      --bg:#0b0f18;
+      --bg-grad-1:#0b0f18;
+      --bg-grad-2:#121a2b;
+      --card:#161f30;
       --ink:#eef2f7;
       --muted:#9aa7b8;
-      --brand:#5b9bd5;
-      --brand-dark:#3f7bb8;
-      --accent:#4fc08a;
-      --bad:#e5574a;
-      --border:#2a3345;
+      --brand:#6ba6e0;
+      --brand-2:#8fc0ef;
+      --brand-dark:#4a86c4;
+      --accent:#49c893;
+      --accent-2:#6edcae;
+      --bad:#f0756a;
+      --bad-2:#f5988f;
+      --warn:#f0b94a;
+      --border:#283249;
+      --shadow-sm:0 2px 10px rgba(0,0,0,0.25);
+      --shadow-md:0 10px 30px rgba(0,0,0,0.35);
+      --shadow-lg:0 18px 46px rgba(0,0,0,0.45);
     }
   }
   :root[data-theme="dark"]{
-    --bg:#0f1420;
-    --card:#171f2e;
+    --bg:#0b0f18;
+    --bg-grad-1:#0b0f18;
+    --bg-grad-2:#121a2b;
+    --card:#161f30;
     --ink:#eef2f7;
     --muted:#9aa7b8;
-    --brand:#5b9bd5;
-    --brand-dark:#3f7bb8;
-    --accent:#4fc08a;
-    --bad:#e5574a;
-    --border:#2a3345;
+    --brand:#6ba6e0;
+    --brand-2:#8fc0ef;
+    --brand-dark:#4a86c4;
+    --accent:#49c893;
+    --accent-2:#6edcae;
+    --bad:#f0756a;
+    --bad-2:#f5988f;
+    --warn:#f0b94a;
+    --border:#283249;
+    --shadow-sm:0 2px 10px rgba(0,0,0,0.25);
+    --shadow-md:0 10px 30px rgba(0,0,0,0.35);
+    --shadow-lg:0 18px 46px rgba(0,0,0,0.45);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:var(--bg);
+    background:
+      radial-gradient(900px 480px at 15% -10%, color-mix(in srgb, var(--brand) 16%, transparent), transparent 60%),
+      radial-gradient(800px 420px at 100% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 55%),
+      linear-gradient(180deg, var(--bg-grad-1), var(--bg-grad-2));
+    background-attachment:fixed;
     color:var(--ink);
-    font-family: "Segoe UI", "Heebo", Arial, sans-serif;
+    font-family: "Heebo", "Segoe UI", Arial, sans-serif;
     min-height:100vh;
     display:flex;
     justify-content:center;
-    padding:16px;
+    padding:20px 16px 40px;
   }
   .app{
     width:100%;
@@ -60,62 +94,101 @@
   }
   header.top{
     text-align:center;
-    margin:12px 0 20px;
+    margin:4px 0 24px;
+    background:linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+    color:#fff;
+    border-radius:20px;
+    padding:30px 22px 26px;
+    box-shadow:var(--shadow-md);
+    position:relative;
+    overflow:hidden;
+  }
+  header.top::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(240px 160px at 90% -20%, rgba(255,255,255,0.22), transparent 60%),
+      radial-gradient(260px 180px at -10% 120%, rgba(255,255,255,0.14), transparent 60%);
+    pointer-events:none;
+  }
+  header.top .hero-icon{
+    font-size:2.1rem;
+    margin-bottom:8px;
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,0.2));
   }
   header.top h1{
     font-size:1.5rem;
-    margin:0 0 4px;
-    color:var(--brand);
+    margin:0 0 6px;
+    font-weight:800;
+    letter-spacing:-0.01em;
   }
   header.top p{
-    color:var(--muted);
+    color:rgba(255,255,255,0.88);
     margin:0;
     font-size:0.92rem;
+    position:relative;
   }
   .card{
     background:var(--card);
     border:1px solid var(--border);
     border-radius:var(--radius);
-    padding:24px 20px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.04);
+    padding:26px 22px;
+    box-shadow:var(--shadow-md);
+    animation: cardIn .35s ease;
+  }
+  @keyframes cardIn{
+    from{ opacity:0; transform:translateY(8px); }
+    to{ opacity:1; transform:translateY(0); }
   }
   .progress-wrap{
-    margin-bottom:18px;
+    margin-bottom:20px;
   }
   .progress-bar{
-    height:8px;
+    height:10px;
     background:var(--border);
     border-radius:999px;
     overflow:hidden;
   }
   .progress-fill{
     height:100%;
-    background:var(--brand);
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--brand), var(--accent));
     width:0%;
-    transition:width .3s ease;
+    transition:width .35s cubic-bezier(.4,0,.2,1);
   }
   .progress-label{
     display:flex;
     justify-content:space-between;
     font-size:0.8rem;
     color:var(--muted);
-    margin-top:6px;
+    margin-top:8px;
+    font-weight:600;
   }
+  #scoreRunning{ color:var(--accent); }
   .category-tag{
-    display:inline-block;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
     font-size:0.78rem;
     color:var(--brand);
     background:color-mix(in srgb, var(--brand) 12%, transparent);
-    padding:3px 10px;
+    padding:5px 12px;
     border-radius:999px;
-    margin-bottom:12px;
-    font-weight:600;
+    margin-bottom:14px;
+    font-weight:700;
   }
   .question{
-    font-size:1.15rem;
-    line-height:1.5;
-    margin:0 0 18px;
-    font-weight:600;
+    font-size:1.2rem;
+    line-height:1.55;
+    margin:0 0 20px;
+    font-weight:700;
+    letter-spacing:-0.005em;
+    animation: qIn .3s ease;
+  }
+  @keyframes qIn{
+    from{ opacity:0; transform:translateY(6px); }
+    to{ opacity:1; transform:translateY(0); }
   }
   .options{
     display:flex;
@@ -125,114 +198,183 @@
   .option{
     display:flex;
     align-items:center;
-    gap:10px;
+    gap:12px;
     text-align:right;
     background:var(--bg);
     border:1.5px solid var(--border);
-    border-radius:12px;
-    padding:13px 14px;
+    border-radius:14px;
+    padding:14px 16px;
     font-size:1rem;
+    font-weight:500;
     cursor:pointer;
     color:var(--ink);
-    transition: border-color .15s, background .15s;
+    transition: border-color .15s, background .15s, transform .12s, box-shadow .15s;
   }
-  .option:hover{ border-color:var(--brand); }
+  .option:hover{ border-color:var(--brand); transform:translateY(-1px); box-shadow:var(--shadow-sm); }
+  .option:active{ transform:translateY(0); }
   .option.selected{ border-color:var(--brand); background:color-mix(in srgb, var(--brand) 10%, var(--card)); }
-  .option.correct{ border-color:var(--accent); background:color-mix(in srgb, var(--accent) 16%, var(--card)); }
+  .option.correct{ border-color:var(--accent); background:color-mix(in srgb, var(--accent) 16%, var(--card)); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
   .option.wrong{ border-color:var(--bad); background:color-mix(in srgb, var(--bad) 14%, var(--card)); }
   .option[disabled]{ cursor:default; }
+  .option[disabled]:hover{ transform:none; box-shadow:none; }
   .option .bullet{
     flex:0 0 auto;
-    width:26px; height:26px;
+    width:28px; height:28px;
     border-radius:50%;
     background:var(--border);
     display:flex;align-items:center;justify-content:center;
     font-size:0.85rem; font-weight:700; color:var(--muted);
+    transition: background .15s, color .15s;
   }
   .option.correct .bullet{ background:var(--accent); color:#fff; }
   .option.wrong .bullet{ background:var(--bad); color:#fff; }
 
   .explain{
-    margin-top:16px;
-    padding:14px 16px;
-    border-radius:12px;
+    margin-top:18px;
+    padding:16px 18px;
+    border-radius:14px;
     background:var(--bg);
     border:1px solid var(--border);
-    font-size:0.92rem;
-    line-height:1.55;
+    border-right:4px solid var(--brand);
+    font-size:0.93rem;
+    line-height:1.6;
     display:none;
+    animation: qIn .25s ease;
   }
   .explain.show{ display:block; }
+  .explain.ok{ border-right-color:var(--accent); }
+  .explain.bad{ border-right-color:var(--bad); }
   .explain b{ color:var(--brand); }
 
   .nav-row{
     display:flex;
     justify-content:flex-end;
-    margin-top:20px;
+    margin-top:22px;
   }
   button.primary{
-    background:var(--brand);
+    background:linear-gradient(135deg, var(--brand), var(--brand-2));
     color:#fff;
     border:none;
-    border-radius:10px;
-    padding:12px 26px;
+    border-radius:12px;
+    padding:13px 28px;
     font-size:1rem;
-    font-weight:600;
+    font-weight:700;
     cursor:pointer;
-    transition:background .15s;
+    box-shadow:0 6px 16px color-mix(in srgb, var(--brand) 35%, transparent);
+    transition:transform .12s ease, box-shadow .12s ease, opacity .12s;
+    font-family:inherit;
   }
-  button.primary:hover{ background:var(--brand-dark); }
-  button.primary:disabled{ opacity:.4; cursor:not-allowed; }
+  button.primary:hover{ transform:translateY(-1px); box-shadow:0 10px 22px color-mix(in srgb, var(--brand) 40%, transparent); }
+  button.primary:active{ transform:translateY(0); }
+  button.primary:disabled{ opacity:.4; cursor:not-allowed; transform:none; box-shadow:none; }
   button.ghost{
     background:transparent;
     color:var(--brand);
     border:1.5px solid var(--brand);
-    border-radius:10px;
-    padding:11px 24px;
+    border-radius:12px;
+    padding:12px 24px;
     font-size:0.95rem;
-    font-weight:600;
+    font-weight:700;
     cursor:pointer;
+    font-family:inherit;
+    transition: background .15s;
   }
+  button.ghost:hover{ background:color-mix(in srgb, var(--brand) 10%, transparent); }
 
   /* Start screen */
-  .start-icon{ font-size:2.6rem; text-align:center; margin-bottom:6px; }
+  .start-icon{
+    font-size:3rem;
+    text-align:center;
+    margin-bottom:10px;
+    filter:drop-shadow(0 4px 10px color-mix(in srgb, var(--brand) 30%, transparent));
+  }
   .start-meta{
-    display:flex; justify-content:center; gap:22px; margin:18px 0 22px;
+    display:flex; justify-content:center; gap:14px; margin:20px 0 24px;
     flex-wrap:wrap;
   }
-  .start-meta .item{ text-align:center; }
-  .start-meta .num{ font-size:1.5rem; font-weight:700; color:var(--brand); }
-  .start-meta .lbl{ font-size:0.8rem; color:var(--muted); }
-  .cluster-list{ margin:0; padding-right:18px; color:var(--muted); font-size:0.9rem; line-height:1.9;}
+  .start-meta .item{
+    text-align:center;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px 20px;
+    min-width:88px;
+  }
+  .start-meta .num{ font-size:1.6rem; font-weight:800; color:var(--brand); line-height:1.1; }
+  .start-meta .lbl{ font-size:0.78rem; color:var(--muted); margin-top:2px; font-weight:600; }
+  .cluster-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin:0;
+    padding:0;
+    list-style:none;
+  }
+  @media (max-width:480px){ .cluster-grid{ grid-template-columns:1fr; } }
+  .cluster-grid li{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:10px 12px;
+    font-size:0.85rem;
+    color:var(--ink);
+    font-weight:500;
+  }
+  .cluster-grid li .ic{ font-size:1.05rem; flex:0 0 auto; }
 
   /* Summary screen */
   .score-circle{
-    width:150px;height:150px;border-radius:50%;
-    margin:10px auto 18px;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    border:10px solid var(--border);
+    --p:0;
+    width:170px;height:170px;border-radius:50%;
+    margin:14px auto 20px;
+    display:flex;align-items:center;justify-content:center;
+    background:
+      radial-gradient(circle, var(--card) 62%, transparent 62.5%),
+      conic-gradient(var(--accent) calc(var(--p) * 1%), var(--border) 0);
     position:relative;
+    box-shadow:var(--shadow-sm);
+    transition: background 1s ease;
   }
-  .score-circle .pct{ font-size:2rem; font-weight:800; color:var(--brand); }
-  .score-circle .frac{ font-size:0.85rem; color:var(--muted); }
+  .score-circle .inner{ text-align:center; }
+  .score-circle .pct{ font-size:2.1rem; font-weight:800; color:var(--brand); line-height:1.1; }
+  .score-circle .frac{ font-size:0.85rem; color:var(--muted); font-weight:600; }
 
-  .breakdown{ margin-top:18px; display:flex; flex-direction:column; gap:10px; }
-  .breakdown-row{
-    display:flex; align-items:center; gap:10px; font-size:0.88rem;
+  .final-msg-box{
+    text-align:center;
+    border-radius:14px;
+    padding:14px 16px;
+    font-weight:600;
+    margin:0 0 20px;
+    font-size:0.95rem;
   }
-  .breakdown-row .name{ flex:0 0 42%; color:var(--muted); }
+  .final-msg-box.tier-great{ background:color-mix(in srgb, var(--accent) 16%, transparent); color:var(--accent); }
+  .final-msg-box.tier-good{ background:color-mix(in srgb, var(--brand) 14%, transparent); color:var(--brand); }
+  .final-msg-box.tier-ok{ background:color-mix(in srgb, var(--warn) 18%, transparent); color:var(--warn); }
+  .final-msg-box.tier-low{ background:color-mix(in srgb, var(--bad) 14%, transparent); color:var(--bad); }
+
+  .breakdown{ margin-top:16px; display:flex; flex-direction:column; gap:12px; }
+  .breakdown-row{
+    display:flex; align-items:center; gap:10px; font-size:0.86rem;
+  }
+  .breakdown-row .ic{ flex:0 0 auto; font-size:1rem; width:20px; text-align:center; }
+  .breakdown-row .name{ flex:0 0 34%; color:var(--ink); font-weight:600; }
   .bd-bar-wrap{ flex:1; height:10px; background:var(--border); border-radius:999px; overflow:hidden;}
-  .bd-bar{ height:100%; background:var(--accent); }
-  .bd-frac{ flex:0 0 auto; font-size:0.8rem; color:var(--muted); width:40px; text-align:left; }
+  .bd-bar{ height:100%; border-radius:999px; background:linear-gradient(90deg, var(--brand), var(--accent)); transition:width .6s ease; }
+  .bd-frac{ flex:0 0 auto; font-size:0.78rem; color:var(--muted); width:36px; text-align:left; font-weight:600; }
 
   .review-item{
     border:1px solid var(--border);
-    border-radius:12px;
-    padding:14px 16px;
+    border-right:4px solid var(--bad);
+    border-radius:14px;
+    padding:16px 18px;
     margin-top:12px;
     font-size:0.9rem;
+    background:var(--bg);
   }
-  .review-item .q{ font-weight:600; margin-bottom:8px; }
+  .review-item .q{ font-weight:700; margin-bottom:10px; }
   .review-item .mark{ font-weight:700; }
   .review-item .mark.ok{ color:var(--accent); }
   .review-item .mark.bad{ color:var(--bad); }
@@ -241,24 +383,25 @@
     text-align:center;
     color:var(--muted);
     font-size:0.76rem;
-    margin:22px 0 6px;
+    margin:26px 0 6px;
     line-height:1.6;
   }
 
   .hidden{ display:none !important; }
-  .actions-row{ display:flex; gap:10px; justify-content:center; margin-top:22px; flex-wrap:wrap;}
+  .actions-row{ display:flex; gap:10px; justify-content:center; margin-top:24px; flex-wrap:wrap;}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="top">
+    <div class="hero-icon">📣</div>
     <h1>בוחן ידע ראשוני — הסברה בחירום</h1>
     <p>מערך הדוברות | מבוסס על חומרי המכללה הלאומית לאיתנות ישראלית ופיקוד העורף</p>
   </header>
 
   <!-- START SCREEN -->
   <div class="card" id="screen-start">
-    <div class="start-icon">📣</div>
+    <div class="start-icon">🎯</div>
     <div class="start-meta">
       <div class="item"><div class="num" id="qCountDisplay">0</div><div class="lbl">שאלות</div></div>
       <div class="item"><div class="num">9</div><div class="lbl">אשכולות</div></div>
@@ -268,20 +411,20 @@
       בוחן אמריקאי (רב-ברירה) לבדיקת ידע ראשוני בנושא הסברה והעברת מידע לציבור בחירום ברמת הרשות המקומית.
       לאחר כל שאלה תוצג תשובה מתוקפת והסבר קצר. בסיום יוצג ציון וחלוקה לפי נושאים.
     </p>
-    <p style="font-weight:600; margin-bottom:6px;">נושאי הבוחן:</p>
-    <ul class="cluster-list">
-      <li>עקרונות יסוד בהסברה בחירום</li>
-      <li>מבנה, ייעוד ומשימות מכלול מידע לציבור</li>
-      <li>יעדים ומאפשרים (תוכנית עוגן איתן)</li>
-      <li>ממשקי עבודה מול מכלולים אחרים</li>
-      <li>משימות המכלול לאורך שלבי אירוע</li>
-      <li>הערכת מצב מכלול מידע לציבור</li>
-      <li>מדרגי מדיניות התגוננות (פיקוד העורף)</li>
-      <li>פסיכולוגיית התנהגות אוכלוסייה — מיתוסים מול עובדות</li>
-      <li>תגובת הפרט בתרחישי איום — הנחיות פיקוד העורף</li>
+    <p style="font-weight:700; margin-bottom:10px;">נושאי הבוחן:</p>
+    <ul class="cluster-grid">
+      <li><span class="ic">💡</span>עקרונות יסוד בהסברה בחירום</li>
+      <li><span class="ic">🏢</span>מבנה, ייעוד ומשימות מכלול מידע לציבור</li>
+      <li><span class="ic">🎯</span>יעדים ומאפשרים (עוגן איתן)</li>
+      <li><span class="ic">🔗</span>ממשקי עבודה מול מכלולים אחרים</li>
+      <li><span class="ic">🕐</span>משימות המכלול לאורך שלבי אירוע</li>
+      <li><span class="ic">📋</span>הערכת מצב מכלול מידע לציבור</li>
+      <li><span class="ic">🛡️</span>מדרגי מדיניות התגוננות</li>
+      <li><span class="ic">🧠</span>מיתוסים מול עובדות</li>
+      <li><span class="ic">🚨</span>תגובת הפרט בתרחישי איום</li>
     </ul>
     <div class="nav-row">
-      <button class="primary" id="btnStart">התחל בוחן</button>
+      <button class="primary" id="btnStart">התחל בוחן 🚀</button>
     </div>
   </div>
 
@@ -302,16 +445,16 @@
 
   <!-- SUMMARY SCREEN -->
   <div class="card hidden" id="screen-summary">
-    <h2 style="text-align:center; color:var(--brand); margin-top:0;">סיכום הבוחן</h2>
-    <div class="score-circle"><div class="pct" id="finalPct">0%</div><div class="frac" id="finalFrac">0/0</div></div>
-    <p id="finalMsg" style="text-align:center; color:var(--muted);"></p>
+    <h2 style="text-align:center; color:var(--brand); margin-top:0;">🏁 סיכום הבוחן</h2>
+    <div class="score-circle" id="scoreCircle"><div class="inner"><div class="pct" id="finalPct">0%</div><div class="frac" id="finalFrac">0/0</div></div></div>
+    <div id="finalMsg" class="final-msg-box"></div>
 
-    <p style="font-weight:600; margin-bottom:4px;">ציון לפי נושא:</p>
+    <p style="font-weight:700; margin-bottom:4px;">ציון לפי נושא:</p>
     <div class="breakdown" id="breakdownWrap"></div>
 
     <div class="actions-row">
-      <button class="primary" id="btnReview">סקירת שאלות שהוטעו</button>
-      <button class="ghost" id="btnRestart">התחל מחדש</button>
+      <button class="primary" id="btnReview">🔍 סקירת שאלות שהוטעו</button>
+      <button class="ghost" id="btnRestart">↺ התחל מחדש</button>
     </div>
 
     <div id="reviewWrap" class="hidden" style="margin-top:10px;"></div>
@@ -782,6 +925,20 @@ const QUESTIONS = [
   }
 ];
 
+// ---------- Category icons ----------
+const CAT_ICONS = {
+  "עקרונות יסוד בהסברה": "💡",
+  "מבנה מכלול מידע לציבור": "🏢",
+  "יעדים ומאפשרים": "🎯",
+  "ממשקי עבודה": "🔗",
+  "שלבי אירוע": "🕐",
+  "הערכת מצב": "📋",
+  "מדרגי התגוננות": "🛡️",
+  "התנהגות אוכלוסייה": "🧠",
+  "תגובת הפרט בתרחישי איום": "🚨"
+};
+function catIcon(cat){ return CAT_ICONS[cat] || "📌"; }
+
 // ---------- State ----------
 let currentIndex = 0;
 let userAnswers = []; // {selected, correct}
@@ -842,11 +999,11 @@ function renderQuestion(){
   const item = QUESTIONS[currentIndex];
   answeredCurrent = false;
   btnNext.disabled = true;
-  btnNext.textContent = (currentIndex === QUESTIONS.length - 1) ? 'סיום הבוחן' : 'השאלה הבאה';
+  btnNext.textContent = (currentIndex === QUESTIONS.length - 1) ? 'סיום הבוחן 🏁' : 'השאלה הבאה ←';
 
-  catTag.textContent = item.cat;
+  catTag.innerHTML = `<span>${catIcon(item.cat)}</span><span>${item.cat}</span>`;
   qText.textContent = item.q;
-  explainBox.classList.remove('show');
+  explainBox.classList.remove('show', 'ok', 'bad');
   explainBox.innerHTML = '';
 
   optionsWrap.innerHTML = '';
@@ -880,7 +1037,7 @@ function selectAnswer(idx){
   });
 
   explainBox.innerHTML = (isCorrect ? '✅ ' : '❌ ') + item.explain;
-  explainBox.classList.add('show');
+  explainBox.classList.add('show', isCorrect ? 'ok' : 'bad');
   btnNext.disabled = false;
 
   const correctSoFar = userAnswers.filter(a => a && a.correct).length;
@@ -901,12 +1058,17 @@ function showSummary(){
   document.getElementById('finalPct').textContent = pct + '%';
   document.getElementById('finalFrac').textContent = correct + '/' + total;
 
-  let msg = '';
-  if (pct >= 90) msg = 'מצוין! שליטה גבוהה מאוד בעקרונות ובנהלי ההסברה בחירום.';
-  else if (pct >= 70) msg = 'טוב מאוד — יש כמה נושאים שכדאי לחזק.';
-  else if (pct >= 50) msg = 'בסיס סביר — מומלץ לחזור על החומר ולבצע את הבוחן שוב.';
-  else msg = 'מומלץ ללמוד את החומר שוב בטרם המשך ההדרכה.';
-  document.getElementById('finalMsg').textContent = msg;
+  const circle = document.getElementById('scoreCircle');
+  requestAnimationFrame(() => { circle.style.setProperty('--p', pct); });
+
+  let msg = '', tier = '';
+  if (pct >= 90) { msg = '🏆 מצוין! שליטה גבוהה מאוד בעקרונות ובנהלי ההסברה בחירום.'; tier = 'tier-great'; }
+  else if (pct >= 70) { msg = '👍 טוב מאוד — יש כמה נושאים שכדאי לחזק.'; tier = 'tier-good'; }
+  else if (pct >= 50) { msg = '📚 בסיס סביר — מומלץ לחזור על החומר ולבצע את הבוחן שוב.'; tier = 'tier-ok'; }
+  else { msg = '⚠️ מומלץ ללמוד את החומר שוב בטרם המשך ההדרכה.'; tier = 'tier-low'; }
+  const finalMsgEl = document.getElementById('finalMsg');
+  finalMsgEl.textContent = msg;
+  finalMsgEl.className = 'final-msg-box ' + tier;
 
   const cats = {};
   QUESTIONS.forEach((q, i) => {
@@ -923,11 +1085,17 @@ function showSummary(){
     const row = document.createElement('div');
     row.className = 'breakdown-row';
     row.innerHTML = `
+      <div class="ic">${catIcon(cat)}</div>
       <div class="name">${cat}</div>
-      <div class="bd-bar-wrap"><div class="bd-bar" style="width:${p}%"></div></div>
+      <div class="bd-bar-wrap"><div class="bd-bar" style="width:0%" data-target="${p}"></div></div>
       <div class="bd-frac">${c.correct}/${c.total}</div>
     `;
     bdWrap.appendChild(row);
+  });
+  requestAnimationFrame(() => {
+    bdWrap.querySelectorAll('.bd-bar').forEach(bar => {
+      bar.style.width = bar.dataset.target + '%';
+    });
   });
 
   reviewWrap.classList.add('hidden');
