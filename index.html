@@ -1,0 +1,964 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>בוחן ידע - הסברה בחירום</title>
+<meta name="description" content="בוחן ידע ראשוני בנושא הסברה בחירום ברשות המקומית, מבוסס על חומרי המכללה הלאומית לאיתנות ישראלית ופיקוד העורף.">
+<style>
+  :root{
+    --bg:#f4f6f9;
+    --card:#ffffff;
+    --ink:#1b2430;
+    --muted:#5b6774;
+    --brand:#1d4e89;
+    --brand-dark:#123a68;
+    --accent:#2e9e6b;
+    --bad:#c0392b;
+    --border:#e2e6ec;
+    --radius:16px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0f1420;
+      --card:#171f2e;
+      --ink:#eef2f7;
+      --muted:#9aa7b8;
+      --brand:#5b9bd5;
+      --brand-dark:#3f7bb8;
+      --accent:#4fc08a;
+      --bad:#e5574a;
+      --border:#2a3345;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1420;
+    --card:#171f2e;
+    --ink:#eef2f7;
+    --muted:#9aa7b8;
+    --brand:#5b9bd5;
+    --brand-dark:#3f7bb8;
+    --accent:#4fc08a;
+    --bad:#e5574a;
+    --border:#2a3345;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family: "Segoe UI", "Heebo", Arial, sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:16px;
+  }
+  .app{
+    width:100%;
+    max-width:720px;
+    margin:0 auto;
+  }
+  header.top{
+    text-align:center;
+    margin:12px 0 20px;
+  }
+  header.top h1{
+    font-size:1.5rem;
+    margin:0 0 4px;
+    color:var(--brand);
+  }
+  header.top p{
+    color:var(--muted);
+    margin:0;
+    font-size:0.92rem;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:24px 20px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.04);
+  }
+  .progress-wrap{
+    margin-bottom:18px;
+  }
+  .progress-bar{
+    height:8px;
+    background:var(--border);
+    border-radius:999px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--brand);
+    width:0%;
+    transition:width .3s ease;
+  }
+  .progress-label{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.8rem;
+    color:var(--muted);
+    margin-top:6px;
+  }
+  .category-tag{
+    display:inline-block;
+    font-size:0.78rem;
+    color:var(--brand);
+    background:color-mix(in srgb, var(--brand) 12%, transparent);
+    padding:3px 10px;
+    border-radius:999px;
+    margin-bottom:12px;
+    font-weight:600;
+  }
+  .question{
+    font-size:1.15rem;
+    line-height:1.5;
+    margin:0 0 18px;
+    font-weight:600;
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .option{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-align:right;
+    background:var(--bg);
+    border:1.5px solid var(--border);
+    border-radius:12px;
+    padding:13px 14px;
+    font-size:1rem;
+    cursor:pointer;
+    color:var(--ink);
+    transition: border-color .15s, background .15s;
+  }
+  .option:hover{ border-color:var(--brand); }
+  .option.selected{ border-color:var(--brand); background:color-mix(in srgb, var(--brand) 10%, var(--card)); }
+  .option.correct{ border-color:var(--accent); background:color-mix(in srgb, var(--accent) 16%, var(--card)); }
+  .option.wrong{ border-color:var(--bad); background:color-mix(in srgb, var(--bad) 14%, var(--card)); }
+  .option[disabled]{ cursor:default; }
+  .option .bullet{
+    flex:0 0 auto;
+    width:26px; height:26px;
+    border-radius:50%;
+    background:var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-size:0.85rem; font-weight:700; color:var(--muted);
+  }
+  .option.correct .bullet{ background:var(--accent); color:#fff; }
+  .option.wrong .bullet{ background:var(--bad); color:#fff; }
+
+  .explain{
+    margin-top:16px;
+    padding:14px 16px;
+    border-radius:12px;
+    background:var(--bg);
+    border:1px solid var(--border);
+    font-size:0.92rem;
+    line-height:1.55;
+    display:none;
+  }
+  .explain.show{ display:block; }
+  .explain b{ color:var(--brand); }
+
+  .nav-row{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:20px;
+  }
+  button.primary{
+    background:var(--brand);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:12px 26px;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  button.primary:hover{ background:var(--brand-dark); }
+  button.primary:disabled{ opacity:.4; cursor:not-allowed; }
+  button.ghost{
+    background:transparent;
+    color:var(--brand);
+    border:1.5px solid var(--brand);
+    border-radius:10px;
+    padding:11px 24px;
+    font-size:0.95rem;
+    font-weight:600;
+    cursor:pointer;
+  }
+
+  /* Start screen */
+  .start-icon{ font-size:2.6rem; text-align:center; margin-bottom:6px; }
+  .start-meta{
+    display:flex; justify-content:center; gap:22px; margin:18px 0 22px;
+    flex-wrap:wrap;
+  }
+  .start-meta .item{ text-align:center; }
+  .start-meta .num{ font-size:1.5rem; font-weight:700; color:var(--brand); }
+  .start-meta .lbl{ font-size:0.8rem; color:var(--muted); }
+  .cluster-list{ margin:0; padding-right:18px; color:var(--muted); font-size:0.9rem; line-height:1.9;}
+
+  /* Summary screen */
+  .score-circle{
+    width:150px;height:150px;border-radius:50%;
+    margin:10px auto 18px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    border:10px solid var(--border);
+    position:relative;
+  }
+  .score-circle .pct{ font-size:2rem; font-weight:800; color:var(--brand); }
+  .score-circle .frac{ font-size:0.85rem; color:var(--muted); }
+
+  .breakdown{ margin-top:18px; display:flex; flex-direction:column; gap:10px; }
+  .breakdown-row{
+    display:flex; align-items:center; gap:10px; font-size:0.88rem;
+  }
+  .breakdown-row .name{ flex:0 0 42%; color:var(--muted); }
+  .bd-bar-wrap{ flex:1; height:10px; background:var(--border); border-radius:999px; overflow:hidden;}
+  .bd-bar{ height:100%; background:var(--accent); }
+  .bd-frac{ flex:0 0 auto; font-size:0.8rem; color:var(--muted); width:40px; text-align:left; }
+
+  .review-item{
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 16px;
+    margin-top:12px;
+    font-size:0.9rem;
+  }
+  .review-item .q{ font-weight:600; margin-bottom:8px; }
+  .review-item .mark{ font-weight:700; }
+  .review-item .mark.ok{ color:var(--accent); }
+  .review-item .mark.bad{ color:var(--bad); }
+
+  footer.credit{
+    text-align:center;
+    color:var(--muted);
+    font-size:0.76rem;
+    margin:22px 0 6px;
+    line-height:1.6;
+  }
+
+  .hidden{ display:none !important; }
+  .actions-row{ display:flex; gap:10px; justify-content:center; margin-top:22px; flex-wrap:wrap;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <h1>בוחן ידע ראשוני — הסברה בחירום</h1>
+    <p>מערך הדוברות | מבוסס על חומרי המכללה הלאומית לאיתנות ישראלית ופיקוד העורף</p>
+  </header>
+
+  <!-- START SCREEN -->
+  <div class="card" id="screen-start">
+    <div class="start-icon">📣</div>
+    <div class="start-meta">
+      <div class="item"><div class="num" id="qCountDisplay">0</div><div class="lbl">שאלות</div></div>
+      <div class="item"><div class="num">9</div><div class="lbl">אשכולות</div></div>
+      <div class="item"><div class="num">~15</div><div class="lbl">דקות</div></div>
+    </div>
+    <p style="color:var(--muted); font-size:0.95rem; line-height:1.6;">
+      בוחן אמריקאי (רב-ברירה) לבדיקת ידע ראשוני בנושא הסברה והעברת מידע לציבור בחירום ברמת הרשות המקומית.
+      לאחר כל שאלה תוצג תשובה מתוקפת והסבר קצר. בסיום יוצג ציון וחלוקה לפי נושאים.
+    </p>
+    <p style="font-weight:600; margin-bottom:6px;">נושאי הבוחן:</p>
+    <ul class="cluster-list">
+      <li>עקרונות יסוד בהסברה בחירום</li>
+      <li>מבנה, ייעוד ומשימות מכלול מידע לציבור</li>
+      <li>יעדים ומאפשרים (תוכנית עוגן איתן)</li>
+      <li>ממשקי עבודה מול מכלולים אחרים</li>
+      <li>משימות המכלול לאורך שלבי אירוע</li>
+      <li>הערכת מצב מכלול מידע לציבור</li>
+      <li>מדרגי מדיניות התגוננות (פיקוד העורף)</li>
+      <li>פסיכולוגיית התנהגות אוכלוסייה — מיתוסים מול עובדות</li>
+      <li>תגובת הפרט בתרחישי איום — הנחיות פיקוד העורף</li>
+    </ul>
+    <div class="nav-row">
+      <button class="primary" id="btnStart">התחל בוחן</button>
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div class="card hidden" id="screen-quiz">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label"><span id="progressText">שאלה 1 מתוך 0</span><span id="scoreRunning">0 נכונות</span></div>
+    </div>
+    <div class="category-tag" id="catTag"></div>
+    <div class="question" id="qText"></div>
+    <div class="options" id="optionsWrap"></div>
+    <div class="explain" id="explainBox"></div>
+    <div class="nav-row">
+      <button class="primary" id="btnNext" disabled>השאלה הבאה</button>
+    </div>
+  </div>
+
+  <!-- SUMMARY SCREEN -->
+  <div class="card hidden" id="screen-summary">
+    <h2 style="text-align:center; color:var(--brand); margin-top:0;">סיכום הבוחן</h2>
+    <div class="score-circle"><div class="pct" id="finalPct">0%</div><div class="frac" id="finalFrac">0/0</div></div>
+    <p id="finalMsg" style="text-align:center; color:var(--muted);"></p>
+
+    <p style="font-weight:600; margin-bottom:4px;">ציון לפי נושא:</p>
+    <div class="breakdown" id="breakdownWrap"></div>
+
+    <div class="actions-row">
+      <button class="primary" id="btnReview">סקירת שאלות שהוטעו</button>
+      <button class="ghost" id="btnRestart">התחל מחדש</button>
+    </div>
+
+    <div id="reviewWrap" class="hidden" style="margin-top:10px;"></div>
+  </div>
+
+  <footer class="credit">
+    בוחן זה מיועד להדרכה פנימית בלבד ואינו תחליף לנהלים ולהנחיות הרשמיות של פיקוד העורף והרשות.<br>
+    מבוסס על חומרי לימוד של המכללה הלאומית לאיתנות ישראלית ועל מסמכי מדיניות של פיקוד העורף.
+  </footer>
+</div>
+
+<script>
+const QUESTIONS = [
+  // ===== 1. עקרונות יסוד בהסברה בחירום =====
+  {
+    cat: "עקרונות יסוד בהסברה",
+    q: "מהו העיקרון הראשון מתוך עשרת עקרונות היסוד בהסברה לאוכלוסייה בחירום?",
+    options: ["מהירות מעל דיוק", "אמינות מעל מהירות", "כמות המידע מעל איכותו", "שימוש בשפה מקצועית ומדויקת"],
+    correct: 1,
+    explain: "העיקרון הראשון הוא <b>אמינות מעל מהירות</b>: מתן מידע מאומת בלבד, שקיפות לגבי מה שידוע ומה שעדיין נבדק, ועדכון שוטף כדי למנוע ואקום תקשורתי."
+  },
+  {
+    cat: "עקרונות יסוד בהסברה",
+    q: "עיקרון ה-KISS בהסברה בחירום מתייחס ל:",
+    options: ["שימוש במונחים טכניים ומשפטיים מדויקים", "מסר ברור, פשוט וקצר", "שליחת מספר רב של מסרים בו-זמנית", "כתיבה בשפה רשמית בלבד"],
+    correct: 1,
+    explain: "KISS = Keep It Short and Simple: שפה יומיומית ונגישה, הימנעות ממונחים טכניים/משפטיים, ומיקוד במסר אחד מרכזי לכל תקשורת."
+  },
+  {
+    cat: "עקרונות יסוד בהסברה",
+    q: "עיקרון \"עקביות ורציפות מסר\" פירושו בעיקר:",
+    options: [
+      "כל דובר ברשות רשאי לנסח את המסר בסגנונו האישי",
+      "אחידות בין כל דוברי הרשות ושימוש במונחים ובמסרים זהים בכל הפלטפורמות",
+      "פרסום מסר אחד בלבד לאורך כל האירוע ללא עדכון",
+      "הימנעות מפרסום בפלטפורמות דיגיטליות"
+    ],
+    correct: 1,
+    explain: "עקביות ורציפות מסר דורשות אחידות בין כל דוברי הרשות ושימוש במונחים ובמסרים זהים בכל הפלטפורמות — כדי למנוע בלבול וסתירות."
+  },
+  {
+    cat: "עקרונות יסוד בהסברה",
+    q: "לפי עיקרון \"הכרה ברגש ושמירה על חוסן\", הטון הנדרש בהסברה בחירום הוא:",
+    options: ["נחרץ וסמכותי מאוד", "רגוע ומרגיע, תוך הכרה בפחד, בלבול ותסכול של הציבור", "ניטרלי לחלוטין ללא כל התייחסות רגשית", "דחוף ומבוהל כדי להמחיש את חומרת המצב"],
+    correct: 1,
+    explain: "יש להכיר בתחושות הציבור (פחד, בלבול, תסכול), לשמור על טון רגוע ומרגיע, ולתת תחושת שליטה באמצעות הסבר והנעה לפעולה."
+  },
+  {
+    cat: "עקרונות יסוד בהסברה",
+    q: "עיקרון \"הסבר הרציונל — ה'למה'\" כולל בין היתר מענה לשאלה:",
+    options: ["מי אשם באירוע?", "מדוע חשוב לבצע את ההנחיה ואיזו תועלת מקבל התושב מכך", "כמה עולה הטיפול באירוע לרשות?", "מתי יסתיים תקציב החירום?"],
+    correct: 1,
+    explain: "הסבר הרציונל כולל: מה קרה/איפה/מתי, מדוע חשוב לבצע את ההנחיה, ואיזו תועלת מקבל התושב מהביצוע — זה מחזק את שיתוף הפעולה."
+  },
+  {
+    cat: "עקרונות יסוד בהסברה",
+    q: "עיקרון \"הנעה לפעולה\" בהסברת חירום מדגיש בעיקר:",
+    options: [
+      "תיאור כללי של האירוע ללא הנחיות קונקרטיות",
+      "מסרים שמובילים לפעולה ברורה ומצילת חיים, כמו להיכנס למרחב מוגן או להימנע מהתקהלות",
+      "עידוד הציבור להמתין להנחיות נוספות בלבד",
+      "פרסום סטטיסטיקות בלבד"
+    ],
+    correct: 1,
+    explain: "הנעה לפעולה כוללת מסרים ברורים כמו 'להיכנס למרחב מוגן', 'להימנע מהתקהלות', 'להאזין לעדכונים', בדגש מיוחד על פעולות מצילות חיים."
+  },
+  {
+    cat: "עקרונות יסוד בהסברה",
+    q: "העיקרון העוסק בניטור השיח הציבורי, תיקון מידע שגוי במהירות והפניה למקור הרשמי נקרא:",
+    options: ["התאמה לקהלי יעד", "שימוש במגוון ערוצי תקשורת", "התמודדות עם שמועות", "תיאום בין כל הגורמים"],
+    correct: 2,
+    explain: "עיקרון \"התמודדות עם שמועות\" כולל ניטור מתמשך של השיח הציבורי, תיקון מהיר של מידע שגוי, והפניית הציבור למקור המידע הרשמי."
+  },
+
+  // ===== 2. מבנה, ייעוד ומשימות מכלול מידע לציבור =====
+  {
+    cat: "מבנה מכלול מידע לציבור",
+    q: "לאיזה גורם כפוף מנהל מכלול מידע לציבור ברשות המקומית?",
+    options: ["ישירות לראש הרשות בלבד, ללא מנכ\"ל", "למנכ\"ל הרשות (המכהן כרמ\"ט)", "לקצין הסברה ביקל\"ר בלבד", "למשטרת ישראל"],
+    correct: 1,
+    explain: "מכלול מידע לציבור כפוף למנכ\"ל הרשות (המשמש כרמ\"ט), שכפוף בתורו לראש הרשות. הזיקה המקצועית (לא כפיפות) היא לדוברי ארגוני החירום ולקצין הסברה ביקל\"ר."
+  },
+  {
+    cat: "מבנה מכלול מידע לציבור",
+    q: "משלושת התאים הבאים, איזה אינו חלק מהמבנה הארגוני הפנימי של מכלול מידע לציבור?",
+    options: ["תא דוברות", "תא שירותים דיגיטליים", "מוקד טלפוני", "תא לוגיסטיקה ותפעול"],
+    correct: 3,
+    explain: "המכלול בנוי משלושה תאים: תא דוברות, תא שירותים דיגיטליים ומוקד טלפוני. לוגיסטיקה ותפעול הוא מכלול נפרד לגמרי ברמת מטה החירום הרשותי."
+  },
+  {
+    cat: "מבנה מכלול מידע לציבור",
+    q: "עם איזה גורם למכלול מידע לציבור יש 'זיקה מקצועית' (ולא כפיפות היררכית)?",
+    options: ["מכלול הנדסה ותשתיות", "קצין הסברה ביקל\"ר ודוברי ארגוני החירום", "מכלול משאבי אנוש ומנהל כללי", "ועדת הכספים של הרשות"],
+    correct: 1,
+    explain: "קצין הסברה ביקל\"ר ודוברי ארגוני החירום מופיעים בתרשים הארגוני של המכלול בזיקה מקצועית (קו מקווקו), בעוד הכפיפות ההיררכית היא למנכ\"ל/ראש הרשות."
+  },
+  {
+    cat: "מבנה מכלול מידע לציבור",
+    q: "מהו יעד מכלול מידע לציבור בחירום?",
+    options: [
+      "לנהל את תקציב הרשות בחירום",
+      "להנגיש הנחיות מצילות חיים ומידע לציבור לתושבי הרשות, לשם הכוונת התנהגות, הנגשת שירותים וביסוס תחושת ביטחון וחיזוק יכולת ההתמודדות של האוכלוסייה",
+      "לנהל את פינוי התושבים הפיזי בלבד",
+      "להחליף את תפקיד פיקוד העורף ברשות"
+    ],
+    correct: 1,
+    explain: "יעד המכלול: הנגשת הנחיות מצילות חיים ומידע לציבור לתושבי הרשות לשם הכוונת התנהגות, הנגשת שירותים, ביסוס תחושת ביטחון באמון במענה הרשותי, וחיזוק יכולת ההתמודדות של האוכלוסייה בחירום."
+  },
+  {
+    cat: "מבנה מכלול מידע לציבור",
+    q: "נכסי תא השירותים הדיגיטליים במכלול מידע לציבור כוללים בין היתר:",
+    options: ["לשכות מידע פיזיות בלבד", "אתר אינטרנט, אפליקציה ו-SMS, וכן פלטפורמות ברשתות חברתיות", "רק קו טלפון פתוח", "אך ורק שידורי רדיו"],
+    correct: 1,
+    explain: "תא השירותים הדיגיטליים כולל 'נכסים' (אתר אינטרנט, אפליקציה, SMS ועוד) ו'פלטפורמות' (דפים ועמודים ברשתות החברתיות)."
+  },
+
+  // ===== 3. יעדים ומאפשרים (עוגן איתן) =====
+  {
+    cat: "יעדים ומאפשרים",
+    q: "לפי תוכנית 'עוגן איתן', מה כלול ביעדי מכלול מידע לציבור ביחס למכלול מזון ומים?",
+    options: [
+      "חלוקה פיזית של מזון ומים לתושבים",
+      "גיבוש תוכנית הסברה והפצת מידע על חנויות ממכר מזון הפתוחות בחירום, ואופן אספקה וחלוקה של מים ומזון",
+      "קביעת מחירי המזון בחירום",
+      "ייבוא מזון ממדינות שכנות"
+    ],
+    correct: 1,
+    explain: "יעד המכלול הוא הסברה והפצת מידע — לא ביצוע החלוקה הפיזית עצמה, שמבוצעת ע\"י מכלולים אחרים (לוגיסטיקה, אוכלוסייה וכו')."
+  },
+  {
+    cat: "יעדים ומאפשרים",
+    q: "איזה 'מאפשר' מופיע תחת מכלול מידע לציבור בתוכנית 'עוגן איתן'?",
+    options: ["הקמת מרכז גנרציה", "תוכניות הסברה נצורות לאתגרים ולצרכים הצפויים ולתוכניות המענה הרשותיות", "וידוא מלאי דלק לגנרטורים", "מיפוי מחוסרי מרחב מוגן"],
+    correct: 1,
+    explain: "בין המאפשרים של מכלול מידע לציבור: תוכניות הסברה נצורות (מוכנות מראש) לאתגרים ולצרכים הצפויים, וכן בניית פלטפורמות מגוונות ויתירות להפצת מידע ומענה לתושבים."
+  },
+  {
+    cat: "יעדים ומאפשרים",
+    q: "איזו פעילות הסברה נדרשת כ'מאפשר' עבור מכלול כוח אדם?",
+    options: ["הסברה לעידוד התנדבות בקרב תושבי הרשות", "הסברה בנושא מיסוי", "הסברה על תחבורה ציבורית בלבד", "הסברה בנושא בחירות מקומיות"],
+    correct: 0,
+    explain: "אחד המאפשרים הקשורים למכלול מידע לציבור הוא גיבוש תוכנית הסברה לעידוד התנדבות בקרב תושבי הרשות, לתגבור מערך כוח האדם בחירום."
+  },
+
+  // ===== 4. ממשקי עבודה =====
+  {
+    cat: "ממשקי עבודה",
+    q: "מה 'נותן' מכלול מידע לציבור למכלול אוכלוסייה, לפי טבלת הממשקים?",
+    options: [
+      "תמ\"צ שירותי רפואה ושירותי דת",
+      "מידע אודות שירותי בריאות, רווחה ודת; מידע מומלץ למפונים ולנפגעים; המלצות למסרים ומידע תומך חוסן",
+      "חלוקת מזון פיזית לנפגעים",
+      "אישור תקציבי לפעילות המכלול"
+    ],
+    correct: 1,
+    explain: "מכלול מידע לציבור 'נותן' למכלול אוכלוסייה מידע על שירותי בריאות/רווחה/דת, מידע מומלץ למפונים ולנפגעים, והמלצות למסרים ומידע תומך חוסן. בתמורה הוא 'מקבל' ממכלול אוכלוסייה תמ\"צ אוכלוסייה ותמ\"צ פניות תושבים."
+  },
+  {
+    cat: "ממשקי עבודה",
+    q: "מה מכלול מידע לציבור 'מקבל' מהיקל\"ר (יחידת הקישור לפיקוד העורף ברשות)?",
+    options: [
+      "אישור תקציב הדוברות",
+      "מדיניות התגוננות ומשמעותה לרשות, הנחיות מצילות חיים לפרסום, ותוכניות הסברה לתרחישים השונים",
+      "רשימת עובדי הרשות",
+      "תוכנית העבודה השנתית של הרשות"
+    ],
+    correct: 1,
+    explain: "מהיקל\"ר מקבל מכלול מידע לציבור: מדיניות התגוננות ומשמעותה, הנחיות מצילות חיים לפרסום, תמ\"צ צרכי מידע בפלטפורמות פקע\"ר, ותוכניות הסברה לתרחישים השונים."
+  },
+  {
+    cat: "ממשקי עבודה",
+    q: "מה 'נותן' מכלול מידע לציבור ליקל\"ר, לפי טבלת הממשקים?",
+    options: [
+      "תמ\"צ פניות תושבים ותמ\"צ פעילות הסברה ומידע לציבור, כולל פערי הסברה ומידע מול פקע\"ר",
+      "מידע על אירועי חומ\"ס",
+      "דיווח על מצב תשתיות המים ברשות",
+      "נתוני מס רכוש"
+    ],
+    correct: 0,
+    explain: "מכלול מידע לציבור מעביר ליקל\"ר תמ\"צ פניות תושבים, תמ\"צ פעילות הסברה ומידע לציבור, את תוכנית ההסברה הרשותית המתוכננת, ופערי הסברה ומידע מול פקע\"ר — כדי שהיקל\"ר יוכל לתאם זאת מול פיקוד העורף."
+  },
+
+  // ===== 5. משימות לאורך שלבי אירוע =====
+  {
+    cat: "שלבי אירוע",
+    q: "מהם חמשת שלבי הפעולה של המכלול, לפי מודל ה'תפקידי המכלול' (למשל ברעידת אדמה)?",
+    options: [
+      "התרעה, תגובה, מידע, פרסום, סיכום",
+      "היערכות והכנות, תגובה מיידית, מענה ראשוני, מענה משלים, שיקום",
+      "אזהרה, בהלה, שגרה, חקירה, דוח",
+      "פתיחה, ביצוע, בקרה, עדכון, סגירה"
+    ],
+    correct: 1,
+    explain: "חמשת השלבים: היערכות והכנות (לפני) → תגובה מיידית → מענה ראשוני → מענה משלים → שיקום (אחרי) — הציר נע 'לפני האירוע' עד 'אחרי האירוע'."
+  },
+  {
+    cat: "שלבי אירוע",
+    q: "איזו פעולה שייכת לשלב ה'היערכות וההכנות' של מכלול מידע לציבור טרם רעידת אדמה?",
+    options: ["חילוץ לכודים", "הכנת סרטון מקדים של ראש הרשות לחיזוק החוסן, בתיאום מקדים של המסרים מול היקל\"ר", "הקמת מרכז גנרציה", "ביצוע הערכת מצב מכלולית לקראת אירוע נוסף"],
+    correct: 1,
+    explain: "בשלב ההיערכות: הכנת סרטון מקדים של ראש הרשות, חיזוק האמון במקור המידע, ובניית פלטפורמות הפצת מידע — לפני שהאירוע בכלל קורה."
+  },
+  {
+    cat: "שלבי אירוע",
+    q: "בסדר הפעולות לאירוע הרס קונבנציונלי (לביצוע מיידי בזמן האירוע), אחת ממשימות מכלול מידע לציבור היא:",
+    options: [
+      "תגבור מוקדנים במוקד הרשותי למתן מענה לפניות התושבים",
+      "הוצאת צווי גיוס לעובדי הרשות",
+      "ניתוק תשתיות מסכנות חיים באתר ההרס",
+      "פתיחת מקלטים"
+    ],
+    correct: 0,
+    explain: "בזמן האירוע עצמו מכלול מידע לציבור מתגבר מוקדנים במוקד הרשותי למתן מענה שוטף לפניות התושבים (גם בנושאי שירותים מוניציפליים רגילים), וכן יוצר תמ\"צ פניות תושבים ופותח לשכות מידע בהתאם לצורך."
+  },
+  {
+    cat: "שלבי אירוע",
+    q: "איזו משימה שייכת למכלול מידע לציבור בשלב 'לאחר קבלת אחריות' (לאחר סיום פעולות חילוץ)?",
+    options: [
+      "הוצאת סייר למקום האירוע לאיתור מקום הנפילה",
+      "הפצת הסברה בכל התחומים: מס רכוש, אזורי שהייה, פינוי נפגעים, וחידוד נוהל 'חפץ חשוד' במסגרות החינוך, לצד הפצת סרטון ראש הרשות לחיזוק חוסן התושבים",
+      "ווידוא סגירת הזירה כולל שומר וגדרות",
+      "הפעלת יחידת הרחפנים לקבלת תמונות בזמן אמת"
+    ],
+    correct: 1,
+    explain: "בשלב שלאחר קבלת האחריות, מכלול מידע לציבור מפיץ הסברה מקיפה בכל התחומים הרלוונטיים (מס רכוש, אזורי שהייה, פינוי נפגעים, נוהל חפץ חשוד) ומפרסם סרטון של ראש הרשות לחיזוק חוסן התושבים."
+  },
+  {
+    cat: "שלבי אירוע",
+    q: "בשלב ה'מענה משלים' (לפי מודל חמשת השלבים), מכלול מידע לציבור מתמקד בעיקר ב:",
+    options: [
+      "הפצת מידע רציף והפחתת אי-ודאות, תוך צמצום נפח ושמועות",
+      "חילוץ לכודים מתחת להריסות",
+      "קביעת מדיניות ההתגוננות הארצית",
+      "אישור תקציבי חירום"
+    ],
+    correct: 0,
+    explain: "בשלב המענה המשלים: הפצת מידע רציף ואי-הפחתת אי-ודאות (צמצום שמועות), תמיכה בהתמודדות האוכלוסייה ומענה לחיפוש בני משפחה וקרובים."
+  },
+
+  // ===== 6. הערכת מצב מכלול מידע לציבור =====
+  {
+    cat: "הערכת מצב",
+    q: "באיזה מקום בסדר הדוברים הכולל (12 גורמים) בהערכת מצב רשותית מופיע מנהל מכלול מידע לציבור?",
+    options: ["ראשון, מיד אחרי ראש הרשות", "מקום שישי, אחרי מכלול אוכלוסייה ומכלול חינוך", "לפני היקל\"ר", "אחרון, לפני ראש הרשות בלבד"],
+    correct: 1,
+    explain: "סדר הדוברים: ראש הרשות/מנכ\"ל ← מרכז שליטה ודיווח ← יקל\"ר ← מכלול אוכלוסייה ← מכלול חינוך ← <b>מכלול מידע לציבור (מקום 6)</b> ← הנדסה ותשתיות ← לוגיסטיקה ← משאבי אנוש ← ארגוני חירום ← מרכז שליטה ודיווח ← ראש הרשות."
+  },
+  {
+    cat: "הערכת מצב",
+    q: "בהערכת המצב הפנימית של מכלול מידע לציבור עצמו, מי מדבר ראשון?",
+    options: ["דוברות", "מנהל המכלול", "קצין הסברה ביקל\"ר", "מנהל מוקד טלפוני"],
+    correct: 1,
+    explain: "סדר הדוברים הפנימי: מנהל המכלול (עדכון אירועים והנחיות) ← ק. הסברה יקל\"ר ← מנהל מוקד טלפוני ← מנהל שירותים דיגיטליים ← דוברות ← וחוזר למנהל המכלול לסיכום."
+  },
+  {
+    cat: "הערכת מצב",
+    q: "מהו 'מדד תודעת שירות לתושב' שעולה בהערכת מצב מוקד טלפוני/לשכות מידע?",
+    options: [
+      "מספר התלונות שהוגשו לבג\"ץ",
+      "אחוז שיחות שנענו/ננטשות/פתוחות וניתוח הפניות של תושבי הרשות למוקד הרשותי ולמוקד פיקוד העורף",
+      "דירוג שביעות רצון כללי של התושבים מהרשות",
+      "מספר העובדים במוקד"
+    ],
+    correct: 1,
+    explain: "מדד תודעת השירות לתושב בודק אחוז שיחות שנענו/ננטשות/פתוחות, ומנתח את כמות ואופי הפניות למוקד הרשותי ולמוקד פיקוד העורף."
+  },
+  {
+    cat: "הערכת מצב",
+    q: "'קבוצת תכנון' ברשות המקומית מוגדרת כ:",
+    options: [
+      "ועדת ביקורת לבדיקת תקציב החירום",
+      "כלי של עבודת המטה לתכנון מענה נדרש לתושבים או סיוע לגופים שונים, המשלב מספר מכלולים",
+      "קבוצת מתנדבים קבועה שאינה משתנה לעולם",
+      "גוף סטטוטורי חיצוני לרשות"
+    ],
+    correct: 1,
+    explain: "קבוצת תכנון היא כלי עבודת מטה לתכנון מענה נדרש לתושבים (או סיוע לגופים שונים), המשלב מספר מכלולים כדי לממש החלטות שהתקבלו בהערכת המצב."
+  },
+
+  // ===== 7. מדרגי מדיניות התגוננות =====
+  {
+    cat: "מדרגי התגוננות",
+    q: "כמה מדרגי מדיניות התגוננות קיימים, לפי המסמך העדכני של פיקוד העורף?",
+    options: ["2", "3", "4", "6"],
+    correct: 2,
+    explain: "קיימים 4 מדרגים: 1-פעילות מלאה, 2-פעילות חלקית, 3-פעילות מצומצמת, 4-פעילות הכרחית."
+  },
+  {
+    cat: "מדרגי התגוננות",
+    q: "לפי העדכון התורתי העדכני של פיקוד העורף, מהי ההבהרה העקרונית החשובה לגבי הגעה למרחב מוגן בזמן התרעה?",
+    options: [
+      "מספיק 'להגיע' לכיוון המרחב המוגן, גם אם לא נכנסים אליו בפועל",
+      "החובה היא 'להיכנס' בפועל למרחב המוגן תוך זמן ההתגוננות, ולא רק 'להגיע' אליו",
+      "אין צורך במרחב מוגן אם מדובר באירוע קצר",
+      "ההנחיה הוסרה לחלוטין בעדכון האחרון"
+    ],
+    correct: 1,
+    explain: "העדכון התורתי מבהיר במפורש: הנחיות פיקוד העורף מתייחסות לחובת ההיכנסות למרחב מוגן ולא רק להשלמת הפעולה בזמן ההתגוננות ע\"י הגעה אליו בלבד."
+  },
+  {
+    cat: "מדרגי התגוננות",
+    q: "לפי ההגדרות העדכניות, 'התקהלות' מוגדרת כ:",
+    options: ["מפגש של מעל 50 אנשים", "מפגש של מעל 10 אנשים יחד באותו מרחב ובאותו זמן", "כל אירוע מאורגן מראש בלבד", "מפגש בתוך מבנה ציבורי בלבד"],
+    correct: 1,
+    explain: "התקהלות מוגדרת כמפגש של מעל 10 אנשים יחד באותו מרחב ובאותו זמן. בשטח פתוח נדרש גם מרחק של 500 מטר לפחות בין מוקדי התקהלות."
+  },
+  {
+    cat: "מדרגי התגוננות",
+    q: "במדרג 4 ('פעילות הכרחית') — מה נכון לגבי פעילות חינוכית וחברתית ברוב המקרים?",
+    options: ["מתקיימת ללא הגבלות", "אין לקיים פעילויות חינוכיות", "מתקיימת רק בשטחים פתוחים", "מתקיימת רק בלילה"],
+    correct: 1,
+    explain: "במדרג הגבוה ביותר (4 — פעילות הכרחית) אין לקיים פעילויות חינוכיות וחברתיות כלל, ואין לקיים התקהלויות (למעט משק חיוני על פי הנחיות ייעודיות)."
+  },
+
+  // ===== 8. פסיכולוגיה - מיתוסים מול עובדות =====
+  {
+    cat: "התנהגות אוכלוסייה",
+    q: "לפי חומרי ענף התנהגות אוכלוסייה בפיקוד העורף, תגובות כמו הלם, פאניקה, ביזה והתנהגות 'לא רציונלית' הן:",
+    options: [
+      "תיאור מדויק של רוב ההתנהגות האנושית בפועל בחירום",
+      "בעיקרן מיתוסים — בפועל ההתנהגות ברוב המקרים מאופיינת בהיענות מלאה להנחיות ובפעילות אדפטיבית ותמיכה הדדית",
+      "תופעות שמתרחשות אך ורק אצל ילדים",
+      "תופעות שאין להן כל השפעה על עבודת ההסברה"
+    ],
+    correct: 1,
+    explain: "ההפרדה בין מיתוסים לעובדות קריטית לעבודת ההסברה: המיתוס מתאר הלם/פאניקה/ביזה/התנהגות לא רציונלית, אך העובדה היא שרוב האנשים נענים להנחיות ומתנהגים באופן אדפטיבי ותומך."
+  },
+  {
+    cat: "התנהגות אוכלוסייה",
+    q: "דוגמה אמיתית שהוצגה לכך שפיקוד העורף נדרש להפריך 'ידיעה כוזבת': טענה שהתפרסמה כאילו...",
+    options: [
+      "כל האזרחים צריכים לפנות את בתיהם",
+      "ישראלים \"מתנפלים\" על מדפי הסופרמרקטים ומרוקנים אותם",
+      "כל בתי הספר ייסגרו לצמיתות",
+      "אין עוד צורך במרחבים מוגנים"
+    ],
+    correct: 1,
+    explain: "דוגמה שהוצגה: כותרת שגויה על ישראלים ה\"מתנפלים\" על המדפים בסופרמרקטים — תמונה שחוזקה מיידית ע\"י פיקוד העורף כדי להפריך את הטענה המוטעית, בדיוק כפי שעיקרון 'התמודדות עם שמועות' מחייב."
+  },
+  {
+    cat: "התנהגות אוכלוסייה",
+    q: "'עקרון הרציפות' בהתנהגות אוכלוסייה בחירום מתייחס ל:",
+    options: [
+      "הצורך להימנע מכל שינוי בשגרת החיים",
+      "הכיוון המאמץ הניהולי והטיפולי לשימור הרציפויות השונות בחיי היחיד, המשפחה, הארגון והקהילה, או להחזרתן על כנן",
+      "חובת הרשות לספק רציפות אספקת חשמל בלבד",
+      "המשך שידורי הטלוויזיה ללא הפסקה"
+    ],
+    correct: 1,
+    explain: "עקרון הרציפות: בהתמודדות עם אסון, יש לשלביו השונים לכוון את המאמץ הניהולי והטיפולי לשימור הרציפויות (תפקודית, קוגניטיבית, חברתית, אישית) בחייהם של היחיד, המשפחה, הארגון והקהילה — או להחזרתן על כנן."
+  },
+
+  // ===== 9. תגובת הפרט בתרחישי איום (פיקוד העורף) =====
+  {
+    cat: "תגובת הפרט בתרחישי איום",
+    q: "מה ההנחיה הבסיסית בעת ירי רקטות וטילים?",
+    options: [
+      "להמתין בחוץ ולצלם את היירוט",
+      "להיכנס למרחב המוגן הכי בטוח שניתן להגיע אליו בזמן ההתגוננות, לסגור דלת וחלון, ולהישאר עד לקבלת הודעת שחרור מפיקוד העורף",
+      "לברוח ברכב מהאזור במהירות האפשרית",
+      "להתקשר קודם כל למשפחה ורק אז להיכנס למיגון"
+    ],
+    correct: 1,
+    explain: "ההנחיה: כניסה מיידית למרחב המוגן הטוב ביותר שניתן להגיע אליו בזמן העומד לרשות, סגירת דלת וחלון, והמתנה עד הודעת שחרור רשמית מפיקוד העורף — לא לפי תחושה אישית."
+  },
+  {
+    cat: "תגובת הפרט בתרחישי איום",
+    q: "מהו ההבדל העקרוני המרכזי בין הנחיית התגוננות מירי טילים לבין הנחיית התגוננות מחדירת מחבלים?",
+    options: [
+      "אין כל הבדל — ההנחיות זהות לחלוטין",
+      "בטילים היציאה מהמיגון מותנית בהודעת שחרור/חלוף זמן סיכון; בחדירת מחבלים יש להישאר נעולים במקום עד הנחיה מפורשת של כוחות הביטחון, ולא להסתמך על 'כלל זמן' כלשהו",
+      "בחדירת מחבלים אין צורך להיכנס למרחב מוגן כלל",
+      "בטילים אין הגבלת זמן יציאה, ואילו בחדירת מחבלים תמיד יוצאים אחרי 10 דקות"
+    ],
+    correct: 1,
+    explain: "זהו הבדל קריטי להסברה מדויקת: בירי טילים ניתן להסתמך על הודעת שחרור/פרק זמן; בחדירת מחבלים יש להיכנס למבנה, לנעול ולהישאר עד הנחיה מפורשת מכוחות הביטחון — ואסור להניח שהסכנה חלפה רק בגלל שחלף זמן מסוים."
+  },
+  {
+    cat: "תגובת הפרט בתרחישי איום",
+    q: "מהו סדר העדיפויות הרשמי בבחירת מרחב מוגן בתוך מבנה?",
+    options: [
+      "חדר אמבטיה ← מטבח ← סלון ← מרפסת",
+      "ממ\"ד/ממ\"ק ← מקלט ← חדר מדרגות פנימי ← חדר פנימי עם כמה שפחות קירות/פתחים חיצוניים",
+      "כל חדר תקף באותה מידה, אין סדר עדיפויות",
+      "קומת הגג תמיד עדיפה על הקומות התחתונות"
+    ],
+    correct: 1,
+    explain: "סדר העדיפות: ממ\"ד/ממ\"ק → מקלט (בבניין או ציבורי שניתן להגיע אליו בזמן) → חדר מדרגות פנימי → חדר פנימי עם מינימום קירות/חלונות/פתחים חיצוניים, תוך ישיבה מתחת לקו החלונות וצמוד לקיר פנימי."
+  },
+  {
+    cat: "תגובת הפרט בתרחישי איום",
+    q: "מדוע לא מומלץ לבחור בחדר אמבטיה או שירותים כמרחב מוגן כאשר קיימת חלופה בטוחה יותר?",
+    options: [
+      "משום שהם קטנים מדי לכל בני הבית",
+      "בשל סכנת התנפצות זכוכית וחרסינה באזור",
+      "משום שאסור להישאר שם יותר מדקה",
+      "משום שאין בהם תאורה"
+    ],
+    correct: 1,
+    explain: "חדרי אמבטיה/שירותים/מטבח מכילים זכוכית וחרסינה שעלולים להתנפץ ולגרום לפציעה — לכן הם לא עדיפים כשיש חלופה בטוחה יותר (ממ\"ד, מקלט, חדר מדרגות וכד')."
+  },
+  {
+    cat: "תגובת הפרט בתרחישי איום",
+    q: "מהי ההנחיה המקובלת בעת רעידת אדמה, אם לא ניתן לצאת במהירות לשטח פתוח?",
+    options: [
+      "לרוץ למעלית הקרובה ביותר",
+      "להיכנס לממ\"ד (ולהשאיר את הדלת פתוחה) או להתקדם לחדר המדרגות; כמוצא אחרון להתכופף ולהגן על הראש מתחת לרהיט יציב",
+      "לצאת מיד למרפסת ולהישאר שם",
+      "להתקשר קודם כל לשירותי החירום ולהמתין להנחיה בטלפון"
+    ],
+    correct: 1,
+    explain: "אם אי אפשר לצאת החוצה תוך שניות, ההנחיה היא כניסה לממ\"ד עם דלת פתוחה, או התקדמות לחדר מדרגות; כמוצא אחרון — התכופפות והגנה על הראש מתחת לרהיט יציב."
+  },
+  {
+    cat: "תגובת הפרט בתרחישי איום",
+    q: "מהי ההנחיה בעת התרעת צונאמי?",
+    options: [
+      "להישאר על החוף ולצלם את הגלים",
+      "להתרחק מיד מחוף הים, לעלות למקום גבוה ולפעול לפי שילוט הפינוי וההנחיות הרשמיות, ולא לחזור עד הודעה רשמית",
+      "להיכנס למים כדי להתרחק מהחוף",
+      "להמתין בבית עד להודעה נוספת"
+    ],
+    correct: 1,
+    explain: "בצונאמי יש להתרחק מיד מהחוף, לעלות לאזור גבוה, לפעול לפי שילוט הפינוי, ולא לחזור לחוף עד לקבלת הודעה רשמית שהסכנה חלפה."
+  },
+  {
+    cat: "תגובת הפרט בתרחישי איום",
+    q: "אחד מ'כללי הזהב' הרשמיים בזמן התרעה הוא:",
+    options: [
+      "להישאר בחוץ כדי לתעד את האירוע",
+      "לא להתעכב כדי לצלם, לאסוף ציוד או לבדוק מה קרה, ולא לצאת מהמרחב המוגן רק משום שנשמע פיצוץ או שנדמה שהיירוט הסתיים",
+      "לפרסם מיד ברשתות החברתיות את מיקום הנפילה",
+      "להתקרב לחפצים חשודים כדי לבדוק מה הם"
+    ],
+    correct: 1,
+    explain: "כללי הזהב כוללים: לא מתעכבים לצילום/איסוף ציוד/בדיקה; לא יוצאים מהמיגון בטרם עת; לא מתקרבים לחפצים חשודים (ומדווחים במוקד 100); מסייעים לאוכלוסיות פגיעות להגיע למיגון."
+  },
+  {
+    cat: "תגובת הפרט בתרחישי איום",
+    q: "מה המספר הרשמי לדיווח למשטרת ישראל, למשל על חפץ חשוד?",
+    options: ["104", "106", "100", "102"],
+    correct: 2,
+    explain: "100 הוא מוקד המשטרה. לשם השוואה: 104 פיקוד העורף, 101 מד\"א, 102 כבאות והצלה, 106 מוקד עירוני."
+  },
+  {
+    cat: "תגובת הפרט בתרחישי איום",
+    q: "לגבי 'כלל עשר הדקות' הוותיק לאחר אזעקת טילים — מה המצב בהתאם לעדכון התורתי?",
+    options: [
+      "הכלל עדיין היחיד הקובע בכל מצב, ללא תלות בהודעות נוספות",
+      "מערך ההתרעה המודרני כולל הודעות מפורשות של 'עדכון' ו'סיום אירוע', וההודעה החיה של פיקוד העורף גוברת על הכלל הוותיק כשיש הבדל ביניהם",
+      "הכלל בוטל לחלוטין ואין כיום כל הנחיה לגבי משך השהייה במיגון",
+      "הכלל הוארך ל-30 דקות באופן גורף"
+    ],
+    correct: 1,
+    explain: "בעבר נהג כלל גנרי של כ-10 דקות המתנה. כיום מערך ההתרעה כולל הודעות 'עדכון' ו'סיום אירוע' ספציפיות, וההודעה הרשמית העדכנית של פיקוד העורף קודמת לכלל ההיסטורי במקרה של הבדל ביניהם — חשוב במיוחד להסברה מדויקת ועדכנית."
+  },
+  {
+    cat: "תגובת הפרט בתרחישי איום",
+    q: "מהי ההמלצה הרשמית בכל הנוגע להפצת מידע ברשתות החברתיות בזמן אירוע חירום?",
+    options: [
+      "להפיץ כל מידע שמגיע, כדי שהציבור יידע כמה שיותר מהר",
+      "להסתמך אך ורק על ערוצי המידע הרשמיים (יישומון/פורטל פיקוד העורף, דוברות הרשות) ולהימנע מהפצת מידע בלתי מאומת",
+      "להימנע לגמרי משימוש ברשתות חברתיות בחירום",
+      "להעביר רק תמונות, ללא טקסט"
+    ],
+    correct: 1,
+    explain: "ההנחיה הרשמית מדגישה הסתמכות על מקורות מאומתים בלבד והימנעות מהפצת מידע בלתי מבוקר — עיקרון זה מתלכד ישירות עם עיקרון 'התמודדות עם שמועות' של מכלול מידע לציבור."
+  }
+];
+
+// ---------- State ----------
+let currentIndex = 0;
+let userAnswers = []; // {selected, correct}
+let answeredCurrent = false;
+
+// ---------- DOM refs ----------
+const screenStart = document.getElementById('screen-start');
+const screenQuiz = document.getElementById('screen-quiz');
+const screenSummary = document.getElementById('screen-summary');
+const qCountDisplay = document.getElementById('qCountDisplay');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const scoreRunning = document.getElementById('scoreRunning');
+const catTag = document.getElementById('catTag');
+const qText = document.getElementById('qText');
+const optionsWrap = document.getElementById('optionsWrap');
+const explainBox = document.getElementById('explainBox');
+const btnNext = document.getElementById('btnNext');
+const btnStart = document.getElementById('btnStart');
+const btnRestart = document.getElementById('btnRestart');
+const btnReview = document.getElementById('btnReview');
+const reviewWrap = document.getElementById('reviewWrap');
+
+qCountDisplay.textContent = QUESTIONS.length;
+
+btnStart.addEventListener('click', () => {
+  screenStart.classList.add('hidden');
+  screenQuiz.classList.remove('hidden');
+  renderQuestion();
+});
+
+btnRestart.addEventListener('click', () => {
+  currentIndex = 0;
+  userAnswers = [];
+  reviewWrap.classList.add('hidden');
+  reviewWrap.innerHTML = '';
+  screenSummary.classList.add('hidden');
+  screenStart.classList.remove('hidden');
+});
+
+btnNext.addEventListener('click', () => {
+  if (currentIndex < QUESTIONS.length - 1) {
+    currentIndex++;
+    renderQuestion();
+  } else {
+    showSummary();
+  }
+});
+
+btnReview.addEventListener('click', () => {
+  reviewWrap.classList.toggle('hidden');
+  if (!reviewWrap.classList.contains('hidden') && reviewWrap.innerHTML === '') {
+    renderReview();
+  }
+});
+
+function renderQuestion(){
+  const item = QUESTIONS[currentIndex];
+  answeredCurrent = false;
+  btnNext.disabled = true;
+  btnNext.textContent = (currentIndex === QUESTIONS.length - 1) ? 'סיום הבוחן' : 'השאלה הבאה';
+
+  catTag.textContent = item.cat;
+  qText.textContent = item.q;
+  explainBox.classList.remove('show');
+  explainBox.innerHTML = '';
+
+  optionsWrap.innerHTML = '';
+  item.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="bullet">${String.fromCharCode(1488+idx)}</span><span>${opt}</span>`;
+    btn.addEventListener('click', () => selectAnswer(idx));
+    optionsWrap.appendChild(btn);
+  });
+
+  const total = QUESTIONS.length;
+  progressFill.style.width = ((currentIndex) / total * 100) + '%';
+  progressText.textContent = `שאלה ${currentIndex+1} מתוך ${total}`;
+  const correctSoFar = userAnswers.filter(a => a.correct).length;
+  scoreRunning.textContent = `${correctSoFar} נכונות`;
+}
+
+function selectAnswer(idx){
+  if (answeredCurrent) return;
+  answeredCurrent = true;
+  const item = QUESTIONS[currentIndex];
+  const isCorrect = idx === item.correct;
+  userAnswers[currentIndex] = { selected: idx, correct: isCorrect };
+
+  const opts = optionsWrap.querySelectorAll('.option');
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === item.correct) btn.classList.add('correct');
+    if (i === idx && i !== item.correct) btn.classList.add('wrong');
+  });
+
+  explainBox.innerHTML = (isCorrect ? '✅ ' : '❌ ') + item.explain;
+  explainBox.classList.add('show');
+  btnNext.disabled = false;
+
+  const correctSoFar = userAnswers.filter(a => a && a.correct).length;
+  scoreRunning.textContent = `${correctSoFar} נכונות`;
+
+  const total = QUESTIONS.length;
+  progressFill.style.width = ((currentIndex+1) / total * 100) + '%';
+}
+
+function showSummary(){
+  screenQuiz.classList.add('hidden');
+  screenSummary.classList.remove('hidden');
+
+  const total = QUESTIONS.length;
+  const correct = userAnswers.filter(a => a && a.correct).length;
+  const pct = Math.round((correct/total)*100);
+
+  document.getElementById('finalPct').textContent = pct + '%';
+  document.getElementById('finalFrac').textContent = correct + '/' + total;
+
+  let msg = '';
+  if (pct >= 90) msg = 'מצוין! שליטה גבוהה מאוד בעקרונות ובנהלי ההסברה בחירום.';
+  else if (pct >= 70) msg = 'טוב מאוד — יש כמה נושאים שכדאי לחזק.';
+  else if (pct >= 50) msg = 'בסיס סביר — מומלץ לחזור על החומר ולבצע את הבוחן שוב.';
+  else msg = 'מומלץ ללמוד את החומר שוב בטרם המשך ההדרכה.';
+  document.getElementById('finalMsg').textContent = msg;
+
+  const cats = {};
+  QUESTIONS.forEach((q, i) => {
+    if (!cats[q.cat]) cats[q.cat] = {correct:0, total:0};
+    cats[q.cat].total++;
+    if (userAnswers[i] && userAnswers[i].correct) cats[q.cat].correct++;
+  });
+
+  const bdWrap = document.getElementById('breakdownWrap');
+  bdWrap.innerHTML = '';
+  Object.keys(cats).forEach(cat => {
+    const c = cats[cat];
+    const p = Math.round((c.correct/c.total)*100);
+    const row = document.createElement('div');
+    row.className = 'breakdown-row';
+    row.innerHTML = `
+      <div class="name">${cat}</div>
+      <div class="bd-bar-wrap"><div class="bd-bar" style="width:${p}%"></div></div>
+      <div class="bd-frac">${c.correct}/${c.total}</div>
+    `;
+    bdWrap.appendChild(row);
+  });
+
+  reviewWrap.classList.add('hidden');
+  reviewWrap.innerHTML = '';
+}
+
+function renderReview(){
+  const wrongOnly = [];
+  QUESTIONS.forEach((q, i) => {
+    if (!userAnswers[i] || !userAnswers[i].correct) wrongOnly.push(i);
+  });
+
+  if (wrongOnly.length === 0) {
+    reviewWrap.innerHTML = '<p style="text-align:center;color:var(--muted);">כל הכבוד — אין שאלות שהוטעו!</p>';
+    return;
+  }
+
+  wrongOnly.forEach(i => {
+    const item = QUESTIONS[i];
+    const selected = userAnswers[i] ? userAnswers[i].selected : null;
+    const div = document.createElement('div');
+    div.className = 'review-item';
+    div.innerHTML = `
+      <div class="q">${i+1}. ${item.q}</div>
+      <div>תשובתך: <span class="mark bad">${selected !== null ? item.options[selected] : 'לא נענתה'}</span></div>
+      <div>התשובה הנכונה: <span class="mark ok">${item.options[item.correct]}</span></div>
+      <div style="margin-top:6px;color:var(--muted);">${item.explain}</div>
+    `;
+    reviewWrap.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
