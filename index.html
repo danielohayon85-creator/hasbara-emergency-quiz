@@ -112,6 +112,109 @@
       radial-gradient(260px 180px at -10% 120%, rgba(255,255,255,0.14), transparent 60%);
     pointer-events:none;
   }
+  .theme-toggle{
+    position:absolute;
+    top:14px; left:14px;
+    width:38px; height:38px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,0.4);
+    background:rgba(255,255,255,0.15);
+    color:#fff;
+    font-size:1.1rem;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    backdrop-filter: blur(4px);
+    transition: transform .2s ease, background .15s;
+    z-index:2;
+  }
+  .theme-toggle:hover{ background:rgba(255,255,255,0.28); transform:rotate(-12deg) scale(1.06); }
+
+  .mascot-bubble{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:14px 16px;
+    margin:-8px 0 18px;
+    box-shadow:var(--shadow-sm);
+    animation: mascotIn .4s ease;
+  }
+  @keyframes mascotIn{
+    from{ opacity:0; transform:translateY(-6px) scale(.98); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+  .mascot-avatar{
+    flex:0 0 auto;
+    font-size:1.8rem;
+    width:44px; height:44px;
+    border-radius:50%;
+    background:color-mix(in srgb, var(--brand) 14%, transparent);
+    display:flex;align-items:center;justify-content:center;
+    animation: mascotBob 3s ease-in-out infinite;
+  }
+  @keyframes mascotBob{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-3px) rotate(-4deg); }
+  }
+  .mascot-text{
+    flex:1;
+    font-size:0.9rem;
+    line-height:1.5;
+    color:var(--ink);
+    font-weight:500;
+    align-self:center;
+    transition: opacity .15s;
+  }
+  .mascot-text.swap{ opacity:0; }
+
+  .streak-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    font-size:0.76rem;
+    font-weight:700;
+    color:#fff;
+    background:linear-gradient(135deg,#ff8a3d,#ff5252);
+    padding:3px 10px;
+    border-radius:999px;
+    margin-right:8px;
+    animation: streakPop .3s ease;
+    vertical-align:middle;
+  }
+  @keyframes streakPop{
+    0%{ transform:scale(0.5); opacity:0; }
+    60%{ transform:scale(1.15); }
+    100%{ transform:scale(1); opacity:1; }
+  }
+
+  .milestone-banner{
+    text-align:center;
+    font-size:0.82rem;
+    font-weight:700;
+    color:var(--brand);
+    margin:-6px 0 16px;
+    animation: mascotIn .3s ease;
+  }
+
+  .confetti-piece{
+    position:fixed;
+    top:-20px;
+    width:9px; height:14px;
+    opacity:0.9;
+    pointer-events:none;
+    z-index:999;
+    border-radius:2px;
+    animation-name: confettiFall;
+    animation-timing-function: cubic-bezier(.4,0,.6,1);
+    animation-fill-mode: forwards;
+  }
+  @keyframes confettiFall{
+    0%{ transform:translateY(0) rotate(0deg); opacity:1; }
+    100%{ transform:translateY(100vh) rotate(540deg); opacity:0; }
+  }
+
   header.top .hero-icon{
     font-size:2.1rem;
     margin-bottom:8px;
@@ -184,11 +287,34 @@
     margin:0 0 20px;
     font-weight:700;
     letter-spacing:-0.005em;
-    animation: qIn .3s ease;
   }
   @keyframes qIn{
     from{ opacity:0; transform:translateY(6px); }
     to{ opacity:1; transform:translateY(0); }
+  }
+  #quizBody.slide-in{ animation: slideIn .28s cubic-bezier(.3,0,.2,1); }
+  #quizBody.slide-out{ animation: slideOut .18s ease forwards; }
+  @keyframes slideIn{
+    from{ opacity:0; transform:translateX(24px); }
+    to{ opacity:1; transform:translateX(0); }
+  }
+  @keyframes slideOut{
+    from{ opacity:1; transform:translateX(0); }
+    to{ opacity:0; transform:translateX(-24px); }
+  }
+  .kbd-hint{
+    text-align:center;
+    font-size:0.74rem;
+    color:var(--muted);
+    margin-top:14px;
+  }
+  .kbd-hint kbd{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:5px;
+    padding:1px 6px;
+    font-family:inherit;
+    font-size:0.72rem;
   }
   .options{
     display:flex;
@@ -394,10 +520,17 @@
 <body>
 <div class="app">
   <header class="top">
+    <button class="theme-toggle" id="btnTheme" title="החלף מצב תאורה" aria-label="החלף מצב כהה/בהיר">🌙</button>
     <div class="hero-icon">📣</div>
     <h1>בוחן ידע ראשוני — הסברה בחירום</h1>
     <p>מערך הדוברות | מבוסס על חומרי המכללה הלאומית לאיתנות ישראלית ופיקוד העורף</p>
   </header>
+
+  <!-- MASCOT -->
+  <div class="mascot-bubble" id="mascotBubble">
+    <div class="mascot-avatar">🦉</div>
+    <div class="mascot-text" id="mascotText">היי! אני הינשוף של הדוברות 🦉 בוא נבדוק כמה אתה בקיא בהסברה בחירום.</div>
+  </div>
 
   <!-- START SCREEN -->
   <div class="card" id="screen-start">
@@ -434,13 +567,16 @@
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
       <div class="progress-label"><span id="progressText">שאלה 1 מתוך 0</span><span id="scoreRunning">0 נכונות</span></div>
     </div>
-    <div class="category-tag" id="catTag"></div>
-    <div class="question" id="qText"></div>
-    <div class="options" id="optionsWrap"></div>
-    <div class="explain" id="explainBox"></div>
+    <div id="quizBody">
+      <div class="category-tag" id="catTag"></div>
+      <div class="question" id="qText"></div>
+      <div class="options" id="optionsWrap"></div>
+      <div class="explain" id="explainBox"></div>
+    </div>
     <div class="nav-row">
       <button class="primary" id="btnNext" disabled>השאלה הבאה</button>
     </div>
+    <p class="kbd-hint">טיפ: אפשר לבחור תשובה עם המקשים <kbd>1</kbd>-<kbd>4</kbd> ולהמשיך עם <kbd>Enter</kbd></p>
   </div>
 
   <!-- SUMMARY SCREEN -->
@@ -939,10 +1075,65 @@ const CAT_ICONS = {
 };
 function catIcon(cat){ return CAT_ICONS[cat] || "📌"; }
 
+// ---------- Theme toggle ----------
+const btnTheme = document.getElementById('btnTheme');
+(function initTheme(){
+  try{
+    const saved = localStorage.getItem('hq-theme');
+    if (saved === 'dark' || saved === 'light'){
+      document.documentElement.setAttribute('data-theme', saved);
+      btnTheme.textContent = saved === 'dark' ? '☀️' : '🌙';
+    }
+  }catch(e){}
+})();
+btnTheme.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  btnTheme.textContent = next === 'dark' ? '☀️' : '🌙';
+  try{ localStorage.setItem('hq-theme', next); }catch(e){}
+});
+
+// ---------- Mascot ----------
+const mascotText = document.getElementById('mascotText');
+const START_MASCOT_MSGS = [
+  "היי! אני הינשוף של הדוברות 🦉 בוא נבדוק כמה אתה בקיא בהסברה בחירום.",
+  "מוכן? אין לחץ — כל שאלה מגיעה עם הסבר מיד אחרי שתענה 😊",
+  "9 אשכולות, 38 שאלות, ואני איתך לאורך כל הדרך 🦉✨"
+];
+const CORRECT_MSGS = ["יפה! 🎯", "בדיוק! 👏", "מעולה, המשך כך! ⭐", "קלעת בול! 🔥", "זהו זה! 💪"];
+const WRONG_MSGS = ["לא נורא, קורה לכולם 🙂", "כמעט! שים לב להסבר 👇", "זו הייתה מתוחכמת, בוא נלמד ממנה 📖", "לא בדיוק, אבל עכשיו תדע 💡"];
+
+function setMascot(msg){
+  mascotText.classList.add('swap');
+  setTimeout(() => {
+    mascotText.textContent = msg;
+    mascotText.classList.remove('swap');
+  }, 140);
+}
+setMascot(START_MASCOT_MSGS[Math.floor(Math.random()*START_MASCOT_MSGS.length)]);
+
+// ---------- Confetti ----------
+function burstConfetti(count){
+  const colors = ['#1d4e89','#2bbf84','#ff8a3d','#ff5252','#8fc0ef','#f0b94a'];
+  for (let i=0; i<count; i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random()*100 + 'vw';
+    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+    piece.style.animationDuration = (2.2 + Math.random()*1.6) + 's';
+    piece.style.animationDelay = (Math.random()*0.4) + 's';
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 4200);
+  }
+}
+
 // ---------- State ----------
 let currentIndex = 0;
 let userAnswers = []; // {selected, correct}
 let answeredCurrent = false;
+let streak = 0;
+const quizBody = document.getElementById('quizBody');
 
 // ---------- DOM refs ----------
 const screenStart = document.getElementById('screen-start');
@@ -967,24 +1158,46 @@ qCountDisplay.textContent = QUESTIONS.length;
 btnStart.addEventListener('click', () => {
   screenStart.classList.add('hidden');
   screenQuiz.classList.remove('hidden');
+  quizBody.classList.add('slide-in');
   renderQuestion();
 });
 
 btnRestart.addEventListener('click', () => {
   currentIndex = 0;
   userAnswers = [];
+  streak = 0;
   reviewWrap.classList.add('hidden');
   reviewWrap.innerHTML = '';
   screenSummary.classList.add('hidden');
   screenStart.classList.remove('hidden');
+  setMascot(START_MASCOT_MSGS[Math.floor(Math.random()*START_MASCOT_MSGS.length)]);
 });
 
-btnNext.addEventListener('click', () => {
+function goNext(){
+  if (!answeredCurrent) return;
   if (currentIndex < QUESTIONS.length - 1) {
-    currentIndex++;
-    renderQuestion();
+    quizBody.classList.remove('slide-in');
+    quizBody.classList.add('slide-out');
+    setTimeout(() => {
+      currentIndex++;
+      renderQuestion();
+      quizBody.classList.remove('slide-out');
+      quizBody.classList.add('slide-in');
+    }, 170);
   } else {
     showSummary();
+  }
+}
+btnNext.addEventListener('click', goNext);
+
+document.addEventListener('keydown', (e) => {
+  if (screenQuiz.classList.contains('hidden')) return;
+  if (['1','2','3','4'].includes(e.key) && !answeredCurrent){
+    const idx = parseInt(e.key,10) - 1;
+    const opts = optionsWrap.querySelectorAll('.option');
+    if (opts[idx]) selectAnswer(idx);
+  } else if ((e.key === 'Enter' || e.key === 'ArrowLeft') && answeredCurrent && !btnNext.disabled){
+    goNext();
   }
 });
 
@@ -1018,8 +1231,16 @@ function renderQuestion(){
   const total = QUESTIONS.length;
   progressFill.style.width = ((currentIndex) / total * 100) + '%';
   progressText.textContent = `שאלה ${currentIndex+1} מתוך ${total}`;
-  const correctSoFar = userAnswers.filter(a => a.correct).length;
-  scoreRunning.textContent = `${correctSoFar} נכונות`;
+  const correctSoFar = userAnswers.filter(a => a && a.correct).length;
+  const streakHtml = streak >= 3 ? `<span class="streak-badge">🔥 ${streak} ברצף</span>` : '';
+  scoreRunning.innerHTML = `${streakHtml}${correctSoFar} נכונות`;
+
+  const mid = Math.floor(total/2);
+  if (currentIndex === mid){
+    setMascot("חצי הדרך! אתה עושה את זה מצוין 💪");
+  } else if (currentIndex === total - 1){
+    setMascot("השאלה האחרונה! קדימה, תביא אותה 🏁");
+  }
 }
 
 function selectAnswer(idx){
@@ -1040,8 +1261,14 @@ function selectAnswer(idx){
   explainBox.classList.add('show', isCorrect ? 'ok' : 'bad');
   btnNext.disabled = false;
 
+  if (isCorrect){ streak++; } else { streak = 0; }
+
   const correctSoFar = userAnswers.filter(a => a && a.correct).length;
-  scoreRunning.textContent = `${correctSoFar} נכונות`;
+  const streakHtml = streak >= 3 ? `<span class="streak-badge">🔥 ${streak} ברצף</span>` : '';
+  scoreRunning.innerHTML = `${streakHtml}${correctSoFar} נכונות`;
+
+  const pool = isCorrect ? CORRECT_MSGS : WRONG_MSGS;
+  setMascot(pool[Math.floor(Math.random()*pool.length)]);
 
   const total = QUESTIONS.length;
   progressFill.style.width = ((currentIndex+1) / total * 100) + '%';
@@ -1061,14 +1288,15 @@ function showSummary(){
   const circle = document.getElementById('scoreCircle');
   requestAnimationFrame(() => { circle.style.setProperty('--p', pct); });
 
-  let msg = '', tier = '';
-  if (pct >= 90) { msg = '🏆 מצוין! שליטה גבוהה מאוד בעקרונות ובנהלי ההסברה בחירום.'; tier = 'tier-great'; }
-  else if (pct >= 70) { msg = '👍 טוב מאוד — יש כמה נושאים שכדאי לחזק.'; tier = 'tier-good'; }
-  else if (pct >= 50) { msg = '📚 בסיס סביר — מומלץ לחזור על החומר ולבצע את הבוחן שוב.'; tier = 'tier-ok'; }
-  else { msg = '⚠️ מומלץ ללמוד את החומר שוב בטרם המשך ההדרכה.'; tier = 'tier-low'; }
+  let msg = '', tier = '', mascotMsg = '';
+  if (pct >= 90) { msg = '🏆 מצוין! שליטה גבוהה מאוד בעקרונות ובנהלי ההסברה בחירום.'; tier = 'tier-great'; mascotMsg = 'וואו, ציון מדהים! 🦉🏆'; burstConfetti(70); }
+  else if (pct >= 70) { msg = '👍 טוב מאוד — יש כמה נושאים שכדאי לחזק.'; tier = 'tier-good'; mascotMsg = 'כל הכבוד, אתה כמעט שם! 👏'; burstConfetti(30); }
+  else if (pct >= 50) { msg = '📚 בסיס סביר — מומלץ לחזור על החומר ולבצע את הבוחן שוב.'; tier = 'tier-ok'; mascotMsg = 'התחלה טובה — בוא נחזק כמה נושאים 📚'; }
+  else { msg = '⚠️ מומלץ ללמוד את החומר שוב בטרם המשך ההדרכה.'; tier = 'tier-low'; mascotMsg = 'לא נורא, בוא נעבור על החומר שוב יחד 🦉💙'; }
   const finalMsgEl = document.getElementById('finalMsg');
   finalMsgEl.textContent = msg;
   finalMsgEl.className = 'final-msg-box ' + tier;
+  setMascot(mascotMsg);
 
   const cats = {};
   QUESTIONS.forEach((q, i) => {
